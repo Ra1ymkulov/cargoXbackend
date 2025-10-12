@@ -43,7 +43,7 @@ const createOrder = async (req: Request, res: Response) => {
       select: { trackingCode: true },
     });
     const trackCodeForOrders = getTrackCodeForOrders.map(
-      (el) => el.trackingCode
+      (el: any) => el.trackingCode
     );
     const trackingCode = generateTrackCode({
       trackCodeOrders: trackCodeForOrders,
@@ -77,8 +77,28 @@ const createOrder = async (req: Request, res: Response) => {
     });
   }
 };
+const readOrder = async (req: Request, res: Response) => {
+  try {
+    const id = +req.params.id;
+    const order = await prisma.order.update({
+      where: { id },
+      data: { read: true },
+    });
+    res.status(201).json({
+      success: true,
+      message: "Order marked as read",
+      order,
+    });
+  } catch (error) {
+    res.status(501).json({
+      success: false,
+      message: `Error in read funtion: ${error}`,
+    });
+  }
+};
 
 export default {
   createOrder,
   getAllOrder,
+  readOrder,
 };

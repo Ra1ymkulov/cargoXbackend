@@ -29,7 +29,7 @@ model Order {
   price         Float
   user          User              @relation(fields: [userId], references: [id])
   trackingCode  String            @unique
-  read          Boolean
+  read          Boolean           @default(false)
   status        OrderStatus       @default(CREATED)
 
   fromCityId    String
