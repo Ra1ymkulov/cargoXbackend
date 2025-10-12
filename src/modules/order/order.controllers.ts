@@ -48,7 +48,7 @@ const createOrder = async (req: Request, res: Response) => {
     const trackingCode = generateTrackCode({
       trackCodeOrders: trackCodeForOrders,
     });
-    const price = calculatePrice({
+    const { price, distancekm } = calculatePrice({
       fromCity,
       toCity,
       serviceType,
@@ -63,7 +63,7 @@ const createOrder = async (req: Request, res: Response) => {
         serviceTypeId,
         trackingCode,
         read: false,
-        price: 23,
+        price,
       },
     });
     res.status(201).json({
@@ -96,6 +96,7 @@ const readOrder = async (req: Request, res: Response) => {
     });
   }
 };
+
 export default {
   createOrder,
   getAllOrder,

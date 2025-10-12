@@ -1,4 +1,5 @@
 import { AllService, ServiceType } from "@prisma/client";
+import { distanceKm } from "./distanceKm";
 
 interface ICalculatePrice {
   fromCity: AllService;
@@ -12,5 +13,13 @@ export const calculatePrice = ({
   serviceType,
   weightKg,
 }: ICalculatePrice) => {
-  return;
+  const distancekm = distanceKm({
+    lat1: fromCity.lat,
+    lat2: toCity.lat,
+    lon1: fromCity.lon,
+    lon2: toCity.lon,
+  });
+  const price =
+    distancekm * serviceType.priceKm + weightKg * serviceType.pricekg;
+  return { price, distancekm };
 };
