@@ -6,6 +6,15 @@ import { generateToken } from "../../config/token";
 const register = async (req: Request, res: Response) => {
   try {
     const { avatar, fullName, userName, email, password } = req.body;
+    const checkUser = await prisma.user.findUnique({
+      where: { email },
+    });
+    if (checkUser === email) {
+      return res.status(401).json({
+        success: false,
+        message: "Пользователь уже существует!",
+      });
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
       data: {
@@ -17,9 +26,9 @@ const register = async (req: Request, res: Response) => {
       },
     });
     const token = generateToken(user.id, user.email);
-
     res.status(200).json({
       success: true,
+      message: "Вы успешно зарегистрировались!",
       token,
     });
   } catch (error) {
@@ -29,7 +38,6 @@ const register = async (req: Request, res: Response) => {
     });
   }
 };
-
 const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
@@ -50,33 +58,14 @@ const login = async (req: Request, res: Response) => {
       });
     }
     const token = generateToken(user.id, user.email);
-
     res.status(200).json({
       success: true,
       token,
     });
   } catch (error) {
     res.status(5000).json({
-      success: "nulll",
-      teamleader: "Не удалось войти",
-    });
-  }
-};
-
-const getUser = async (req: Request, res: Response) => {
-  try {
-    const id = req.params.id;
-    const user = prisma.user.findUnique({
-      where: { id },
-    });
-    res.status(200).json({
-      success: true,
-      user,
-    });
-  } catch (error) {
-    res.status(500).json({
       success: false,
-      message: "Не удалось найти пользователя!",
+      message: "Не удалось войти",
     });
   }
 };
@@ -84,5 +73,4 @@ const getUser = async (req: Request, res: Response) => {
 export default {
   register,
   login,
-  getUser,
 };
