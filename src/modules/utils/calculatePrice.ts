@@ -14,4 +14,3 @@ export const calculatePrice = ({
 }: ICalculatePrice) => {
   return;
 };
-//dwdwd
