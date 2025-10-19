@@ -63,7 +63,7 @@ const login = async (req: Request, res: Response) => {
       token,
     });
   } catch (error) {
-    res.status(5000).json({
+    res.status(500).json({
       success: false,
       message: "Не удалось войти",
     });
