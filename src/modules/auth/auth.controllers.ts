@@ -69,7 +69,6 @@ const login = async (req: Request, res: Response) => {
     });
   }
 };
-
 export default {
   register,
   login,

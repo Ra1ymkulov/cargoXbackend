@@ -31,16 +31,12 @@ model Order {
   trackingCode  String            @unique
   read          Boolean           @default(false)
   status        OrderStatus       @default(CREATED)
-
   fromCityId    String
   toCityId      String
   fromCity      AllService         @relation("FromCity", fields: [fromCityId], references: [id])
   toCity        AllService         @relation("ToCity", fields: [toCityId], references: [id])
-
   serviceTypeId String
   serviceType   ServiceType        @relation(fields: [serviceTypeId], references: [id])
- 
-
 }
 enum OrderStatus {
   CREATED    
