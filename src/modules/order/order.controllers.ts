@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import prisma from "../../config/prisma";
 import { generateTrackCode } from "../utils/generateTrackCode";
 import { calculatePrice } from "../utils/calculatePrice";
+import sendTelegramMessage from "../../config/telegram";
 
 const getAllOrder = async (req: Request, res: Response) => {
   try {
@@ -96,9 +97,48 @@ const readOrder = async (req: Request, res: Response) => {
     });
   }
 };
-
+const notificationFunc = async (req: Request, res: Response) => {
+  try {
+    const { orderId, status, userId } = req.body;
+    const order = await prisma.order.findUnique({
+      where: { id: orderId },
+    });
+    if (!order) {
+      return res.status(404).json({ message: "Заказ не найден" });
+    }
+    if (
+      order.status === status ||
+      (status !== "CREATED" &&
+        status !== "IN_TRANSIT" &&
+        status !== "DELIVERED" &&
+        status !== "CANCELED")
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Wrong query!",
+      });
+    }
+    const updatedOrder = await prisma.order.update({
+      where: { id: orderId },
+      data: { status },
+    });
+    sendTelegramMessage(
+      `Статус заказа ID: ${orderId}, Изменён: ${order.status} => ${status}, ID Пользователя: ${userId}`
+    );
+    return res.status(200).json({
+      success: true,
+      updatedOrder,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: `Error in notification function: ${error}`,
+    });
+  }
+};
 export default {
   createOrder,
   getAllOrder,
   readOrder,
+  notificationFunc,
 };
