@@ -14,29 +14,42 @@ model User {
   password                        String
   role                            Role @default(CLIENT)
   orders                          Order[]
+  notifications                   Notifications[]
   createdAt                       DateTime @default(now())
   updatedAt                       DateTime @updatedAt
+}
+model Notifications {
+  id            String            @id @default(uuid())
+  userId        String
+  orderId       String
+  message       String
+  read          Boolean           @default(false)
+  createdAt     DateTime          @default(now())
+  user          User              @relation(fields: [userId], references: [id])
+  order         Order             @relation(fields: [orderId], references: [id])
 }
 enum Role {
   CLIENT
   ADMIN
 }
 model Order {
-  id            Int               @id @default(autoincrement())
+  id            String            @id @default(uuid())
   userId        String
   createdAt     DateTime          @default(now())
   weightKg      Float
   price         Float
+  notification  Notifications[]
   user          User              @relation(fields: [userId], references: [id])
   trackingCode  String            @unique
-  read          Boolean           @default(false)
   status        OrderStatus       @default(CREATED)
+  distancekm    Float              @default(0)
   fromCityId    String
   toCityId      String
   fromCity      AllService         @relation("FromCity", fields: [fromCityId], references: [id])
   toCity        AllService         @relation("ToCity", fields: [toCityId], references: [id])
   serviceTypeId String
   serviceType   ServiceType        @relation(fields: [serviceTypeId], references: [id])
+
 }
 enum OrderStatus {
   CREATED    
@@ -59,7 +72,6 @@ model AllService {
   name            String   @unique
   lat             Float
   lon             Float
-
   orderFrom       Order[]  @relation("FromCity")
   orderTo         Order[]  @relation("ToCity")
 }

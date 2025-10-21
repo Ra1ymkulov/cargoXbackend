@@ -63,7 +63,7 @@ const createOrder = async (req: Request, res: Response) => {
         weightKg,
         serviceTypeId,
         trackingCode,
-        read: false,
+        distancekm,
         price,
       },
     });
@@ -80,8 +80,8 @@ const createOrder = async (req: Request, res: Response) => {
 };
 const readOrder = async (req: Request, res: Response) => {
   try {
-    const id = +req.params.id;
-    const order = await prisma.order.update({
+    const id = req.params.id;
+    const order = await prisma.notifications.update({
       where: { id },
       data: { read: true },
     });
@@ -97,9 +97,11 @@ const readOrder = async (req: Request, res: Response) => {
     });
   }
 };
-const notificationFunc = async (req: Request, res: Response) => {
+
+const statusFunc = async (req: Request, res: Response) => {
   try {
-    const { orderId, status, userId } = req.body;
+    const { userId } = req.body;
+    const { orderId, status } = req.params;
     const order = await prisma.order.findUnique({
       where: { id: orderId },
     });
@@ -125,9 +127,18 @@ const notificationFunc = async (req: Request, res: Response) => {
     sendTelegramMessage(
       `Статус заказа ID: ${orderId}, Изменён: ${order.status} => ${status}, ID Пользователя: ${userId}`
     );
+    const notif = await prisma.notifications.create({
+      data: {
+        message: status,
+        read: false,
+        orderId: orderId,
+        userId: userId,
+      },
+    });
     return res.status(200).json({
       success: true,
       updatedOrder,
+      notif,
     });
   } catch (error) {
     res.status(500).json({
@@ -140,5 +151,5 @@ export default {
   createOrder,
   getAllOrder,
   readOrder,
-  notificationFunc,
+  statusFunc,
 };

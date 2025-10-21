@@ -8,6 +8,11 @@ const getUser = async (req: Request, res: Response) => {
       where: { id },
       include: {
         orders: true,
+        notifications: {
+          include: {
+            order: true,
+          },
+        },
       },
     });
     res.status(200).json({
@@ -26,6 +31,7 @@ const getAllUser = async (req: Request, res: Response) => {
     const users = await prisma.user.findMany({
       include: {
         orders: true,
+        notifications: true,
       },
     });
     res.status(201).json({
