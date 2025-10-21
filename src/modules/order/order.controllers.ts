@@ -125,7 +125,11 @@ const statusFunc = async (req: Request, res: Response) => {
       data: { status },
     });
     sendTelegramMessage(
-      `Статус заказа ID: ${orderId}, Изменён: ${order.status} => ${status}, ID Пользователя: ${userId}`
+      `<b>📦 Статус заказа</b>\n <b>ID:</b> ${orderId}\n <b>Изменён:</b> <i>${
+        order.status
+      }</i> ➜ <i>${status}</i>\n <b>ID Пользователя:</b> ${
+        userId || "неизвестен"
+      }`
     );
     const notif = await prisma.notifications.create({
       data: {
