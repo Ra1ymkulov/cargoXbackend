@@ -73,9 +73,31 @@ const getAllService = async (req: Request, res: Response) => {
     });
   }
 };
+import sendTelegramMessageContact from "../../config/telegramBotMessageContact";
+
+const TelegramBotContactMessage = async (req: Request, res: Response) => {
+  try {
+    const { userName, email, text, phonNumber } = req.body;
+
+    sendTelegramMessageContact(
+      ` <b>Сообшения:</b> \n <b>Имя:</b> <i>${userName}</i> \n <b>email:</b> <i>${email}</i> \n <b>текст:</b> <i>${text}</i> \n <b>Номер телефона:</b> <i>${phonNumber}</i>`
+    );
+    return res.status(200).json({
+      success: true,
+      message: "send message",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: `Error in notification function: ${error}`,
+    });
+  }
+};
+
 export default {
   getAllUser,
   getUser,
   getServiceType,
   getAllService,
+  TelegramBotContactMessage,
 };
