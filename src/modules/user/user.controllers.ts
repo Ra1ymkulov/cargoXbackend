@@ -98,7 +98,6 @@ const updateUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { fullName, userName, email, avatar } = req.body;
-
     const existingUser = await prisma.user.findUnique({ where: { id } });
     if (!existingUser) {
       return res.status(404).json({
@@ -106,7 +105,6 @@ const updateUser = async (req: Request, res: Response) => {
         message: "Пользователь не найден!",
       });
     }
-
     const updatedUser = await prisma.user.update({
       where: { id },
       data: {
