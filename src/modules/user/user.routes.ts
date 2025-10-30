@@ -12,5 +12,6 @@ router.post(
   "/message-contact-telegram",
   userControllers.TelegramBotContactMessage
 );
+router.put("/update-profile/:id", userControllers.updateUser);
 
 export default router;

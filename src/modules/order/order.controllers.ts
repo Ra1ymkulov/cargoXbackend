@@ -100,8 +100,8 @@ const readOrder = async (req: Request, res: Response) => {
 };
 const statusFunc = async (req: Request, res: Response) => {
   try {
-    const { userId } = req.body;
-    const { orderId, status } = req.params;
+    const { userId, status } = req.body;
+    const { orderId } = req.params;
     const order = await prisma.order.findUnique({
       where: { id: orderId },
     });
