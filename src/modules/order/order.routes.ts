@@ -10,5 +10,6 @@ router.get("/get-all-service", orderControllers.getAllService);
 router.post("/calculate-price", orderControllers.calculatePriceCreate);
 router.put("/user/:id/read", orderControllers.readOrder);
 router.post("/status-change/:orderId", orderControllers.statusFunc);
+router.delete("/order-delete/:id", orderControllers.deleteOrder);
 
 export default router;

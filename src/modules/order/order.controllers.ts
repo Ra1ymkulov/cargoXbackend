@@ -214,7 +214,25 @@ const calculatePriceCreate = async (req: Request, res: Response) => {
     });
   } catch (error) {}
 };
+const deleteOrder = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const order = prisma.order.delete({
+      where: { id },
+    });
+    res.status(200).json({
+      success: true,
+      order,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: `ошибка при удалений заказа ${error}`,
+    });
+  }
+};
 export default {
+  deleteOrder,
   createOrder,
   getAllOrder,
   readOrder,

@@ -15,6 +15,7 @@ model User {
   role                            Role @default(CLIENT)
   orders                          Order[]
   notifications                   Notifications[]
+  reviews                         Reviews[]
   phone                           String?
   country                         String?
   createdAt                       DateTime @default(now())
@@ -76,4 +77,14 @@ model AllService {
   lon             Float
   orderFrom       Order[]  @relation("FromCity")
   orderTo         Order[]  @relation("ToCity")
+}
+model Reviews {
+  id              String   @id @default(uuid())
+  userId          String
+  user            User              @relation(fields: [userId], references: [id])
+  name            String
+  city            String
+  email           String
+  text            String
+  star            Float
 }
