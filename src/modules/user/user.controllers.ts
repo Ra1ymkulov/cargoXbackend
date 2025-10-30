@@ -115,41 +115,6 @@ const TelegramBotContactMessage = async (req: Request, res: Response) => {
   }
 };
 
-const updateUser = async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const { fullName, userName, email, avatar } = req.body;
-    const existingUser = await prisma.user.findUnique({ where: { id } });
-    if (!existingUser) {
-      return res.status(404).json({
-        success: false,
-        message: "Пользователь не найден!",
-      });
-    }
-    const updatedUser = await prisma.user.update({
-      where: { id },
-      data: {
-        fullName: fullName || existingUser.fullName,
-        userName: userName || existingUser.userName,
-        email: email || existingUser.email,
-        avatar: avatar || existingUser.avatar,
-      },
-    });
-
-    res.status(200).json({
-      success: true,
-      message: "Профиль успешно обновлён",
-      user: updatedUser,
-    });
-  } catch (error: any) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      message: `Ошибка при обновлении профиля: ${error.message}`,
-    });
-  }
-};
-
 export default {
   getAllUser,
   getUser,
