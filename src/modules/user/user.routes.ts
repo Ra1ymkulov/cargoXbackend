@@ -7,6 +7,7 @@ router.get("/get-user/:id", userControllers.getUser);
 router.get("/get-all-users", userControllers.getAllUser);
 router.get("/get-all-service", userControllers.getAllService);
 router.get("/get-service-type", userControllers.getServiceType);
+router.patch("/update/:id", userControllers.updateUser);
 router.post(
   "/message-contact-telegram",
   userControllers.TelegramBotContactMessage

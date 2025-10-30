@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import prisma from "../../config/prisma";
 import { generateTrackCode } from "../utils/generateTrackCode";
-import { calculatePrice } from "../utils/calculatePrice";
 import sendTelegramMessage from "../../config/telegram";
+import { separateCosting } from "../utils/separateCosting";
+import { calculatePrice } from "../utils/calculatePrice";
 
 const getAllOrder = async (req: Request, res: Response) => {
   try {
@@ -97,7 +98,6 @@ const readOrder = async (req: Request, res: Response) => {
     });
   }
 };
-
 const statusFunc = async (req: Request, res: Response) => {
   try {
     const { userId } = req.body;
@@ -151,9 +151,75 @@ const statusFunc = async (req: Request, res: Response) => {
     });
   }
 };
+const getAllService = async (req: Request, res: Response) => {
+  try {
+    const data = await prisma.allService.findMany();
+    res.status(200).json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: `Error in getAllService function: ${error}`,
+    });
+  }
+};
+const getServiceType = async (req: Request, res: Response) => {
+  try {
+    const data = await prisma.serviceType.findMany();
+    res.status(200).json({
+      success: true,
+      data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: `Error in getAllService function: ${error}`,
+    });
+  }
+};
+const calculatePriceCreate = async (req: Request, res: Response) => {
+  try {
+    const { fromCityId, toCityId, serviceTypeId, weightKg } = req.body;
+    if (!fromCityId || !toCityId || !serviceTypeId || !weightKg)
+      return res.status(400).json({
+        success: false,
+        message: "Не все поля заполнены!",
+      });
+    const fromCity = await prisma.allService.findUnique({
+      where: { id: fromCityId },
+    });
+    const toCity = await prisma.allService.findUnique({
+      where: { id: toCityId },
+    });
+    const serviceType = await prisma.serviceType.findUnique({
+      where: { id: serviceTypeId },
+    });
+    if (!fromCity || !toCity || !serviceType)
+      return res.status(404).json({
+        success: false,
+        message: "error in base-date",
+      });
+    const { price, distancekm } = separateCosting({
+      fromCity,
+      toCity,
+      serviceType,
+      weightKg,
+    });
+    res.status(200).json({
+      success: true,
+      price,
+      distancekm,
+    });
+  } catch (error) {}
+};
 export default {
   createOrder,
   getAllOrder,
   readOrder,
   statusFunc,
+  getAllService,
+  getServiceType,
+  calculatePriceCreate,
 };
