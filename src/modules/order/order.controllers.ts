@@ -2,8 +2,8 @@ import { Request, Response } from "express";
 import prisma from "../../config/prisma";
 import { generateTrackCode } from "../utils/generateTrackCode";
 import sendTelegramMessage from "../../config/telegram";
-import { separateCosting } from "../utils/separateCosting";
 import { calculatePrice } from "../utils/calculatePrice";
+import { separateCosting } from "../utils/SeparateCosting";
 
 const getAllOrder = async (req: Request, res: Response) => {
   try {
