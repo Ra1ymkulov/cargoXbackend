@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const TGBOT = process.env.TGBOT;
+const TGBOT = process.env.CONTACT_BOT_TOKEN;
 
 const CHAT_IDS = ["968101120", "5124900056", "6955955270"];
 const sendTelegramMessageContact = async (text: string) => {
@@ -14,7 +14,7 @@ const sendTelegramMessageContact = async (text: string) => {
           parse_mode: "HTML",
         }
       );
-      console.log(`Сообщение отправлено в чат ${chatId}:, response.data`);
+      console.log(`Сообщение отправлено в чат ${chatId}:`, response.data);
     } catch (e: any) {
       console.error(
         `Ошибка отправки в чат ${chatId}:`,
