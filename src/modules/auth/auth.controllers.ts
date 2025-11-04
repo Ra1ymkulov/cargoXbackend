@@ -5,7 +5,7 @@ import { generateToken } from "../../config/token";
 
 const register = async (req: Request, res: Response) => {
   try {
-    const { avatar, fullName, userName, email, password } = req.body;
+    const { avatar, fullName, userName, email, password, phone } = req.body;
     const checkUser = await prisma.user.findUnique({
       where: { email },
     });
@@ -23,6 +23,7 @@ const register = async (req: Request, res: Response) => {
         userName,
         email,
         password: hashedPassword,
+        phone,
       },
     });
     const token = generateToken(user.id, user.email);
