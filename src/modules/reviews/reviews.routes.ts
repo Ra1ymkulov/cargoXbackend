@@ -1,10 +1,10 @@
-// import { Router } from "express";
-// import reviewsControllers from "./reviews.controllers";
+import { Router } from "express";
+import reviewsControllers from "./reviews.controllers";
 
-// const router = Router();
+const router = Router();
 
-// router.post("/add-reviews", reviewsControllers.addReviews);
-// router.get("/get-all-reviews", reviewsControllers.getAllReviews);
-// router.delete("/delete-reviews", reviewsControllers.deleteReviews);
+router.post("/add-reviews", reviewsControllers.addReviews);
+router.get("/get-all-reviews", reviewsControllers.getAllReviews);
+router.delete("/delete-reviews", reviewsControllers.deleteReviews);
 
-// export default router;
+export default router;

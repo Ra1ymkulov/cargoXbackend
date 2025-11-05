@@ -5,11 +5,12 @@ import { generateToken } from "../../config/token";
 
 const register = async (req: Request, res: Response) => {
   try {
-    const { avatar, fullName, userName, email, password, phone } = req.body;
+    const { avatar, fullName, userName, email, password, phone, country } =
+      req.body;
     const checkUser = await prisma.user.findUnique({
       where: { email },
     });
-    if (checkUser === email) {
+    if (checkUser) {
       return res.status(401).json({
         success: false,
         message: "Пользователь уже существует!",
@@ -24,6 +25,7 @@ const register = async (req: Request, res: Response) => {
         email,
         password: hashedPassword,
         phone,
+        country,
       },
     });
     const token = generateToken(user.id, user.email);
@@ -35,10 +37,11 @@ const register = async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: `error in register: ${error}`,
+      message: "Ошибка при регистрации",
     });
   }
 };
+
 const login = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
@@ -64,12 +67,14 @@ const login = async (req: Request, res: Response) => {
       token,
     });
   } catch (error) {
-    res.status(5000).json({
+    console.error("Login error:", error);
+    res.status(500).json({
       success: false,
       message: "Не удалось войти",
     });
   }
 };
+
 export default {
   register,
   login,
