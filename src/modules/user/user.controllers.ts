@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../../config/prisma";
+import sendTelegramMessageContact from "../../config/telegramBotMessageContact";
 
 const getUser = async (req: Request, res: Response) => {
   try {
@@ -8,6 +9,11 @@ const getUser = async (req: Request, res: Response) => {
       where: { id },
       include: {
         orders: true,
+        notifications: {
+          include: {
+            order: true,
+          },
+        },
       },
     });
     res.status(200).json({
@@ -26,6 +32,7 @@ const getAllUser = async (req: Request, res: Response) => {
     const users = await prisma.user.findMany({
       include: {
         orders: true,
+        notifications: true,
       },
     });
     res.status(201).json({
@@ -38,6 +45,27 @@ const getAllUser = async (req: Request, res: Response) => {
       message: `Ошибка при получении всех пользователей: ${error}`,
     });
   }
+};
+const updateUser = async (req: Request, res: Response) => {
+  try {
+    const { country, phone, avatar, email, userName, fullName } = req.body;
+    const { id } = req.params;
+    const update: Record<string, any> = {};
+    if (userName?.trim()) update.userName = userName;
+    if (fullName?.trim()) update.fullName = fullName;
+    if (email?.trim()) update.email = email;
+    if (country?.trim()) update.country = country;
+    if (phone?.trim()) update.phone = phone;
+    if (avatar?.trim()) update.avatar = avatar;
+    const user = await prisma.user.update({
+      where: { id },
+      data: update,
+    });
+    return res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {}
 };
 const getServiceType = async (req: Request, res: Response) => {
   try {
@@ -67,9 +95,31 @@ const getAllService = async (req: Request, res: Response) => {
     });
   }
 };
+
+const TelegramBotContactMessage = async (req: Request, res: Response) => {
+  try {
+    const { userName, email, text, phonNumber } = req.body;
+
+    sendTelegramMessageContact(
+      ` <b>Сообшения:</b> \n <b>Имя:</b> <i>${userName}</i> \n <b>email:</b> <i>${email}</i> \n <b>текст:</b> <i>${text}</i> \n <b>Номер телефона:</b> <i>${phonNumber}</i>`
+    );
+    return res.status(200).json({
+      success: true,
+      message: "send message",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: `Error in notification function: ${error}`,
+    });
+  }
+};
+
 export default {
   getAllUser,
   getUser,
   getServiceType,
   getAllService,
+  TelegramBotContactMessage,
+  updateUser,
 };

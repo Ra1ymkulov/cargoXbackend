@@ -7,7 +7,7 @@ interface ICalculatePrice {
   serviceType: ServiceType;
   weightKg: number;
 }
-export const calculatePrice = ({
+export const separateCosting = ({
   fromCity,
   toCity,
   serviceType,
